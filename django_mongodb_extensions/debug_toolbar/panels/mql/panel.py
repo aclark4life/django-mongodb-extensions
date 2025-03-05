@@ -1,5 +1,5 @@
 #import uuid
-#from collections import defaultdict
+from collections import defaultdict
 #from copy import copy
 #
 #from asgiref.sync import sync_to_async
@@ -13,11 +13,11 @@ from debug_toolbar.panels import Panel
 from django_mongodb_extensions.debug_toolbar.panels.mql import views
 #from debug_toolbar.panels.sql.forms import SQLSelectForm
 from django_mongodb_extensions.debug_toolbar.panels.mql.tracking import wrap_cursor
-#from debug_toolbar.panels.sql.utils import (
-#    contrasting_color_generator,
+from debug_toolbar.panels.sql.utils import (
+    contrasting_color_generator,
 #    is_select_query,
 #    reformat_sql,
-#)
+)
 #from debug_toolbar.utils import render_stacktrace
 #
 #
@@ -93,19 +93,19 @@ from django_mongodb_extensions.debug_toolbar.panels.mql.tracking import wrap_cur
 #    return (query["raw_sql"], repr(raw_params))
 #
 #
-#def _process_query_groups(query_groups, databases, colors, name):
-#    counts = defaultdict(int)
-#    for (alias, _key), query_group in query_groups.items():
-#        count = len(query_group)
-#        # Queries are similar / duplicates only if there are at least 2 of them.
-#        if count > 1:
-#            color = next(colors)
-#            for query in query_group:
-#                query[f"{name}_count"] = count
-#                query[f"{name}_color"] = color
-#            counts[alias] += count
-#    for alias, db_info in databases.items():
-#        db_info[f"{name}_count"] = counts[alias]
+def _process_query_groups(query_groups, databases, colors, name):
+    counts = defaultdict(int)
+    for (alias, _key), query_group in query_groups.items():
+        count = len(query_group)
+        # Queries are similar / duplicates only if there are at least 2 of them.
+        if count > 1:
+            color = next(colors)
+            for query in query_group:
+                query[f"{name}_count"] = count
+                query[f"{name}_color"] = color
+            counts[alias] += count
+    for alias, db_info in databases.items():
+        db_info[f"{name}_count"] = counts[alias]
 #
 #
 class MQLPanel(Panel):
@@ -210,10 +210,10 @@ class MQLPanel(Panel):
 #        for connection in connections.all():
 #            connection._djdt_logger = None
 #
-#    def generate_stats(self, request, response):
-#        colors = contrasting_color_generator()
+    def generate_stats(self, request, response):
+        colors = contrasting_color_generator()
 #        trace_colors = defaultdict(lambda: next(colors))
-#        similar_query_groups = defaultdict(list)
+        similar_query_groups = defaultdict(list)
 #        duplicate_query_groups = defaultdict(list)
 #
 #        if self._queries:
@@ -300,10 +300,10 @@ class MQLPanel(Panel):
 #                if final_query.get("trans_id") is not None:
 #                    final_query["ends_trans"] = True
 #
-#        group_colors = contrasting_color_generator()
-#        _process_query_groups(
-#            similar_query_groups, self._databases, group_colors, "similar"
-#        )
+        group_colors = contrasting_color_generator()
+        _process_query_groups(
+            similar_query_groups, self._databases, group_colors, "similar"
+        )
 #        _process_query_groups(
 #            duplicate_query_groups, self._databases, group_colors, "duplicate"
 #        )
