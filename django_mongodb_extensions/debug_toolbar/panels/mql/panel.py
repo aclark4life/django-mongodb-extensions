@@ -3,7 +3,7 @@
 #from copy import copy
 #
 #from asgiref.sync import sync_to_async
-#from django.db import connections
+from django.db import connections
 #from django.urls import path
 from django.utils.translation import gettext_lazy as _, ngettext
 #
@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _, ngettext
 from debug_toolbar.panels import Panel
 #from debug_toolbar.panels.sql import views
 #from debug_toolbar.panels.sql.forms import SQLSelectForm
-#from debug_toolbar.panels.sql.tracking import wrap_cursor
+from debug_toolbar.panels.sql.tracking import wrap_cursor
 #from debug_toolbar.panels.sql.utils import (
 #    contrasting_color_generator,
 #    is_select_query,
@@ -200,11 +200,11 @@ class MQLPanel(Panel):
 #        """
 #        await sync_to_async(self.enable_instrumentation)()
 #
-#    def enable_instrumentation(self):
-#        # This is thread-safe because database connections are thread-local.
-#        for connection in connections.all():
-#            wrap_cursor(connection)
-#            connection._djdt_logger = self
+    def enable_instrumentation(self):
+        # This is thread-safe because database connections are thread-local.
+        for connection in connections.all():
+            wrap_cursor(connection)
+            connection._djdt_logger = self
 #
 #    def disable_instrumentation(self):
 #        for connection in connections.all():
