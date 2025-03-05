@@ -118,8 +118,8 @@ class MQLPanel(Panel):
 #
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-#        self._sql_time = 0
-#        self._queries = []
+        self._sql_time = 0
+        self._queries = []
         self._databases = {}
 #        # synthetic transaction IDs, keyed by DB alias
 #        self._transaction_ids = {}
@@ -145,35 +145,35 @@ class MQLPanel(Panel):
 #            trans_id = self.new_transaction_id(alias)
 #        return trans_id
 #
-#    def record(self, **kwargs):
-#        self._queries.append(kwargs)
-#        alias = kwargs["alias"]
-#        if alias not in self._databases:
-#            self._databases[alias] = {
-#                "time_spent": kwargs["duration"],
-#                "num_queries": 1,
-#            }
-#        else:
-#            self._databases[alias]["time_spent"] += kwargs["duration"]
-#            self._databases[alias]["num_queries"] += 1
-#        self._sql_time += kwargs["duration"]
-#
-#    # Implement the Panel API
-#
-#    nav_title = _("MQL")
-#
-#    @property
-#    def nav_subtitle(self):
-#        query_count = len(self._queries)
-#        return ngettext(
-#            "%(query_count)d query in %(sql_time).2fms",
-#            "%(query_count)d queries in %(sql_time).2fms",
-#            query_count,
-#        ) % {
-#            "query_count": query_count,
-#            "sql_time": self._sql_time,
-#        }
-#
+    def record(self, **kwargs):
+        self._queries.append(kwargs)
+        alias = kwargs["alias"]
+        if alias not in self._databases:
+            self._databases[alias] = {
+                "time_spent": kwargs["duration"],
+                "num_queries": 1,
+            }
+        else:
+            self._databases[alias]["time_spent"] += kwargs["duration"]
+            self._databases[alias]["num_queries"] += 1
+        self._sql_time += kwargs["duration"]
+
+    # Implement the Panel API
+
+    nav_title = _("MQL")
+
+    @property
+    def nav_subtitle(self):
+        query_count = len(self._queries)
+        return ngettext(
+            "%(query_count)d query in %(sql_time).2fms",
+            "%(query_count)d queries in %(sql_time).2fms",
+            query_count,
+        ) % {
+            "query_count": query_count,
+            "sql_time": self._sql_time,
+        }
+
     @property
     def title(self):
         count = len(self._databases)
