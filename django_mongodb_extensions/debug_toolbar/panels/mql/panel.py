@@ -4,13 +4,13 @@
 #
 #from asgiref.sync import sync_to_async
 from django.db import connections
-#from django.urls import path
+from django.urls import path
 from django.utils.translation import gettext_lazy as _, ngettext
 #
 #from debug_toolbar import settings as dt_settings
 #from debug_toolbar.forms import SignedDataForm
 from debug_toolbar.panels import Panel
-#from debug_toolbar.panels.sql import views
+from django_mongodb_extensions.debug_toolbar.panels.mql import views
 #from debug_toolbar.panels.sql.forms import SQLSelectForm
 from django_mongodb_extensions.debug_toolbar.panels.mql.tracking import wrap_cursor
 #from debug_toolbar.panels.sql.utils import (
@@ -184,14 +184,14 @@ class MQLPanel(Panel):
         ) % {"count": count}
 
     template = "debug_toolbar/panels/mql.html"
-#
-#    @classmethod
-#    def get_urls(cls):
-#        return [
-#            path("sql_select/", views.sql_select, name="sql_select"),
-#            path("sql_explain/", views.sql_explain, name="sql_explain"),
-#            path("sql_profile/", views.sql_profile, name="sql_profile"),
-#        ]
+
+    @classmethod
+    def get_urls(cls):
+        return [
+            path("sql_select/", views.sql_select, name="sql_select"),
+            path("sql_explain/", views.sql_explain, name="sql_explain"),
+            path("sql_profile/", views.sql_profile, name="sql_profile"),
+        ]
 #
 #    async def aenable_instrumentation(self):
 #        """
