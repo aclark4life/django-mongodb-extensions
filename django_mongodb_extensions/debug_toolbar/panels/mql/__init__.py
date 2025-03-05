@@ -1,3 +1,3 @@
-from debug_toolbar.panels.sql.panel import SQLPanel
+from django_mongodb_extensions.debug_toolbar.panels.mql.panel import MQLPanel
 
-__all__ = ["SQLPanel"]
+__all__ = ["MQLPanel"]

@@ -108,9 +108,9 @@ def _process_query_groups(query_groups, databases, colors, name):
         db_info[f"{name}_count"] = counts[alias]
 
 
-class SQLPanel(Panel):
+class MQLPanel(Panel):
     """
-    Panel that displays information about the SQL queries run while processing
+    Panel that displays information about the MQL queries run while processing
     the request.
     """
 
@@ -160,7 +160,7 @@ class SQLPanel(Panel):
 
     # Implement the Panel API
 
-    nav_title = _("SQL")
+    nav_title = _("MQL")
 
     @property
     def nav_subtitle(self):
@@ -178,8 +178,8 @@ class SQLPanel(Panel):
     def title(self):
         count = len(self._databases)
         return ngettext(
-            "SQL queries from %(count)d connection",
-            "SQL queries from %(count)d connections",
+            "MQL queries from %(count)d connection",
+            "MQL queries from %(count)d connections",
             count,
         ) % {"count": count}
 
