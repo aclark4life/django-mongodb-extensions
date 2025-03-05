@@ -183,7 +183,7 @@ class MQLPanel(Panel):
             count,
         ) % {"count": count}
 
-    template = "debug_toolbar/panels/sql.html"
+    template = "debug_toolbar/panels/mql.html"
 
     @classmethod
     def get_urls(cls):
