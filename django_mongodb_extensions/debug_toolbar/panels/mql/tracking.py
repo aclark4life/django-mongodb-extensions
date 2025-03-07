@@ -1,37 +1,37 @@
-#import contextlib
+import contextlib
 import contextvars
-#import datetime
-#import json
-#from time import perf_counter
-#
+import datetime
+import json
+from time import perf_counter
+
 import django.test.testcases
-#from django.utils.encoding import force_str
-#
-#from debug_toolbar.utils import get_stack_trace, get_template_info
-#
-#try:
-#    import psycopg
-#
-#    PostgresJson = psycopg.types.json.Jsonb
-#    STATUS_IN_TRANSACTION = psycopg.pq.TransactionStatus.INTRANS
-#except ImportError:
-#    try:
-#        from psycopg2._json import Json as PostgresJson
-#        from psycopg2.extensions import STATUS_IN_TRANSACTION
-#    except ImportError:
-#        PostgresJson = None
-#        STATUS_IN_TRANSACTION = None
-#
-## Prevents SQL queries from being sent to the DB. It's used
-## by the TemplatePanel to prevent the toolbar from issuing
-## additional queries.
+from django.utils.encoding import force_str
+
+from debug_toolbar.utils import get_stack_trace, get_template_info
+
+try:
+    import psycopg
+
+    PostgresJson = psycopg.types.json.Jsonb
+    STATUS_IN_TRANSACTION = psycopg.pq.TransactionStatus.INTRANS
+except ImportError:
+    try:
+        from psycopg2._json import Json as PostgresJson
+        from psycopg2.extensions import STATUS_IN_TRANSACTION
+    except ImportError:
+        PostgresJson = None
+        STATUS_IN_TRANSACTION = None
+
+# Prevents SQL queries from being sent to the DB. It's used
+# by the TemplatePanel to prevent the toolbar from issuing
+# additional queries.
 allow_sql = contextvars.ContextVar("debug-toolbar-allow-sql", default=True)
-#
-#
-#class SQLQueryTriggered(Exception):
-#    """Thrown when template panel triggers a query"""
-#
-#
+
+
+class SQLQueryTriggered(Exception):
+    """Thrown when template panel triggers a query"""
+
+
 def wrap_cursor(connection):
     # When running a SimpleTestCase, Django monkey patches some DatabaseWrapper
     # methods, including .cursor() and .chunked_cursor(), to raise an exception
@@ -60,27 +60,26 @@ def wrap_cursor(connection):
             if logger is None:
                 return cursor
             mixin = NormalCursorMixin if allow_sql.get() else ExceptionCursorMixin
-            return cursor
-            # return patch_cursor_wrapper_with_mixin(cursor.__class__, mixin)(
-            #     cursor.cursor, connection, logger
-            # )
+            return patch_cursor_wrapper_with_mixin(cursor.__class__, mixin)(
+                cursor.cursor, connection, logger
+            )
 
         def chunked_cursor(*args, **kwargs):
             # prevent double wrapping
             # solves https://github.com/django-commons/django-debug-toolbar/issues/1239
             logger = connection._djdt_logger
             cursor = connection._djdt_chunked_cursor(*args, **kwargs)
-            # if logger is not None and not isinstance(cursor, DjDTCursorWrapperMixin):
-            #     mixin = NormalCursorMixin if allow_sql.get() else ExceptionCursorMixin
-            #     return patch_cursor_wrapper_with_mixin(cursor.__class__, mixin)(
-            #         cursor.cursor, connection, logger
-            #     )
+            if logger is not None and not isinstance(cursor, DjDTCursorWrapperMixin):
+                mixin = NormalCursorMixin if allow_sql.get() else ExceptionCursorMixin
+                return patch_cursor_wrapper_with_mixin(cursor.__class__, mixin)(
+                    cursor.cursor, connection, logger
+                )
             return cursor
 
         connection.cursor = cursor
         connection.chunked_cursor = chunked_cursor
-#
-#
+
+
 def patch_cursor_wrapper_with_mixin(base_wrapper, mixin):
     class DjDTCursorWrapper(mixin, base_wrapper):
         pass
@@ -95,16 +94,16 @@ class DjDTCursorWrapperMixin:
         self.logger = logger
 
 
-#class ExceptionCursorMixin(DjDTCursorWrapperMixin):
-#    """
-#    Wraps a cursor and raises an exception on any operation.
-#    Used in Templates panel.
-#    """
-#
-#    def __getattr__(self, attr):
-#        raise SQLQueryTriggered()
-#
-#
+class ExceptionCursorMixin(DjDTCursorWrapperMixin):
+    """
+    Wraps a cursor and raises an exception on any operation.
+    Used in Templates panel.
+    """
+
+    def __getattr__(self, attr):
+        raise SQLQueryTriggered()
+
+
 class NormalCursorMixin(DjDTCursorWrapperMixin):
     """
     Wraps a cursor and logs queries.
