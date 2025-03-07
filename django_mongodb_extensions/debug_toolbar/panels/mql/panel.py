@@ -12,7 +12,7 @@ from debug_toolbar.forms import SignedDataForm
 from debug_toolbar.panels import Panel
 from debug_toolbar.panels.sql import views
 from debug_toolbar.panels.sql.forms import SQLSelectForm
-from debug_toolbar.panels.sql.tracking import wrap_cursor
+from django_mongodb_extensions.debug_toolbar.panels.mql.tracking import wrap_cursor
 from debug_toolbar.panels.sql.utils import (
     contrasting_color_generator,
     is_select_query,
