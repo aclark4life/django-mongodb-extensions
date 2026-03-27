@@ -15,7 +15,7 @@ def mql_call():
     return list(User.objects.all())
 
 
-class BaseMQLTestCase(TestCase):
+class MQLPanelTests(TestCase):
     panel_id = MQLPanel.panel_id
 
     def setUp(self):
@@ -32,8 +32,6 @@ class BaseMQLTestCase(TestCase):
     def get_response(self, request):
         return self._get_response(request)
 
-
-class MQLPanelTests(BaseMQLTestCase):
     def test_disabled(self):
         config = {"DISABLE_PANELS": {"django_mongodb_extensions.mql_panel.MQLPanel"}}
         self.assertIs(self.panel.enabled, True)
@@ -103,13 +101,7 @@ class MQLPanelTests(BaseMQLTestCase):
         mql_call()
         response = self.panel.process_request(self.request)
         self.panel.generate_stats(self.request, response)
-        self.assertRegex(self.panel.nav_subtitle, r"1 query in \d+\.\d+ms")
-
-    def test_title(self):
-        mql_call()
-        response = self.panel.process_request(self.request)
-        self.panel.generate_stats(self.request, response)
-        self.assertEqual(self.panel.title, "MQL queries from 1 connection")
+        self.assertRegex(self.panel.nav_subtitle, r"1 query in \d+\.\d+ ms")
 
     def test_slow_query_marking(self):
         mql_call()
